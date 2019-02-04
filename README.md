@@ -1,4 +1,4 @@
-# aspnetcore
+# ASP.NET Core
 Lesmateriaal ASP.NET Core - Huidige versie ASP.NET Core 2.2
 
 F5 = run & debug <br />
