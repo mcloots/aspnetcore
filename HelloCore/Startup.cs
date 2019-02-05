@@ -64,7 +64,7 @@ namespace HelloCore
                     template: "{controller}/{action=Index}/{id?}");
             });
 
-            DBInitializer.Initialize(context);
+            //DBInitializer.Initialize(context);
         }
     }
 }
