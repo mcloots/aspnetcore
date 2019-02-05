@@ -1,0 +1,16 @@
+@model List<HelloCore.Models.Klant>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Klanten";
+}
+
+<h2>Klanten</h2>
+
+<ul>
+    @foreach (var klant in Model)
+    {
+        <li>@klant.Voornaam @klant.Naam @klant.AangemaaktDatum</li>
+    }
+</ul>
+
+
