@@ -1,0 +1,15 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Hallo";
+}
+
+<h2>Hallo</h2>
+
+<ul>
+    @for (int i = 0; i < (int)ViewData["Aantal"]; i++)
+    {
+        <li>@ViewData["Message"]</li>
+    }
+</ul>
+
+
