@@ -28,7 +28,7 @@ namespace HelloCore.Controllers
          // GET: Bestelling/Create
         public IActionResult Create()
         {
-            ViewBag.KlantenLijst = GetKlantenList();
+            ViewBag.KlantenLijst = new SelectList(_context.Klanten,"KlantID","Naam");
             return View();
         }
 
@@ -45,17 +45,8 @@ namespace HelloCore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.KlantenLijst = GetKlantenList();
+            ViewBag.KlantenLijst = new SelectList(_context.Klanten, "KlantID", "Naam");
             return View(bestelling);
         }   
-
-        private List<SelectListItem> GetKlantenList()
-        {
-            return _context.Klanten.ToList()
-            .Select(e => new SelectListItem {
-                Value = e.KlantID.ToString(), 
-                Text = e.Voornaam + " " + e.Naam })
-            .ToList();
-        }
     }
 }
