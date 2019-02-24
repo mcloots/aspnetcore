@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HelloCore.Data;
 using HelloCore.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelloCore.Controllers
 {
+    [Authorize]
     public class KlantController : Controller
     {
         private readonly HelloCoreContext _context;
