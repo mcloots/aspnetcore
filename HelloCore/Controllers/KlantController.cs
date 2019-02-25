@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HelloCore.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class KlantController : Controller
     {
         private readonly HelloCoreContext _context;

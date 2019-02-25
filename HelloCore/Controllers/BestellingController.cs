@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HelloCore.Data;
 using HelloCore.Models;
+using HelloCore.ViewModels;
 
 namespace HelloCore.Controllers
 {
@@ -22,14 +23,32 @@ namespace HelloCore.Controllers
         // GET: Bestelling
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Bestellingen.Include(b=>b.Klant).ToListAsync());
-        }   
+            var viewModel = new ListBestellingViewModel();
+            viewModel.Bestellingen = await _context.Bestellingen.Include(b => b.Klant).ToListAsync();
+            return View(viewModel);
+        }
 
-         // GET: Bestelling/Create
+        // GET: Bestelling gefilterd op artikel
+        public async Task<IActionResult> Search(ListBestellingViewModel viewModel)
+        {
+            if (!string.IsNullOrEmpty(viewModel.ArtikelSearch))
+            {
+                viewModel.Bestellingen = await _context.Bestellingen.Include(b => b.Klant).Where(b => b.Artikel.StartsWith(viewModel.ArtikelSearch)).ToListAsync();
+            } else
+            {
+                viewModel.Bestellingen = await _context.Bestellingen.Include(b => b.Klant).ToListAsync();
+            }
+
+            return View("Index", viewModel);
+        }
+
+        // GET: Bestelling/Create
         public IActionResult Create()
         {
-            ViewBag.KlantenLijst = new SelectList(_context.Klanten,"KlantID","Naam");
-            return View();
+            var viewModel = new CreateBestellingViewModel();
+            viewModel.Bestelling = new Bestelling();
+            viewModel.Klanten = new SelectList(_context.Klanten, "KlantID", "Naam");
+            return View(viewModel);
         }
 
         // POST: Bestelling/Create
@@ -37,16 +56,17 @@ namespace HelloCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BestellingID,Artikel,KlantID,Prijs")] Bestelling bestelling)
+        public async Task<IActionResult> Create(CreateBestellingViewModel viewmodel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(bestelling);
+                _context.Add(viewmodel.Bestelling);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.KlantenLijst = new SelectList(_context.Klanten, "KlantID", "Naam");
-            return View(bestelling);
-        }   
+
+            viewmodel.Klanten = new SelectList(_context.Klanten, "KlantID", "Naam");
+            return View(viewmodel);
+        }
     }
 }
