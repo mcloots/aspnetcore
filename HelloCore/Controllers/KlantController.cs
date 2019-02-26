@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HelloCore.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = "Admin")]
     public class KlantController : Controller
     {
         private readonly HelloCoreContext _context;
@@ -22,6 +22,7 @@ namespace HelloCore.Controllers
         }
 
         // GET: Klant
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Klanten.ToListAsync());

@@ -40,6 +40,7 @@ namespace HelloCore
                 options.UseSqlServer(Configuration.GetConnectionString("HelloCoreConnection")));
 
             services.AddDefaultIdentity<IdentityUser>()
+                    .AddRoles<IdentityRole>()
                     .AddDefaultUI(Microsoft.AspNetCore.Identity.UI.UIFramework.Bootstrap4)
                     .AddEntityFrameworkStores<HelloCoreContext>();
 
@@ -79,7 +80,7 @@ namespace HelloCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HelloCoreContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HelloCoreContext context, IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
@@ -101,10 +102,41 @@ namespace HelloCore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Klant}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //DBInitializer.Initialize(context);
+            CreateUserRoles(services).Wait();
+        }
+
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var Context = serviceProvider.GetRequiredService<HelloCoreContext>();
+
+            IdentityResult roleResult;
+            //Adding Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck)
+            {
+                //create the roles and seed them to the database
+                roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+            //Assign Admin role to the main User here we have given our newly registered 
+            //login id for Admin management
+            var user = Context.Users.FirstOrDefault(u => u.Email == "michael.cloots@thomasmore.be");
+            if (user != null)
+            {
+                var roles = Context.UserRoles;
+                var adminRole = Context.Roles.FirstOrDefault(r => r.Name == "Admin");
+                if (adminRole != null)
+                {
+                    if (!roles.Any(ur => ur.UserId == user.Id && ur.RoleId == adminRole.Id))
+                    {
+                        roles.Add(new IdentityUserRole<string>() { UserId = user.Id, RoleId = adminRole.Id });
+                        Context.SaveChanges();
+                    }
+                }
+            }
         }
     }
 }
