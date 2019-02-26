@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HelloCore.Areas.Identity.Pages.Account.Manage

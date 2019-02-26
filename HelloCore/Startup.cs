@@ -101,7 +101,7 @@ namespace HelloCore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    template: "{controller=Klant}/{action=Index}/{id?}");
             });
 
             //DBInitializer.Initialize(context);
