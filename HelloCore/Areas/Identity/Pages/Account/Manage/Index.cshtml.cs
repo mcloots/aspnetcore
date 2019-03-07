@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using HelloCore.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +14,13 @@ namespace HelloCore.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly SignInManager<CustomUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public IndexModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<CustomUser> userManager,
+            SignInManager<CustomUser> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -39,6 +40,16 @@ namespace HelloCore.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Naam")]
+            public string Naam { get; set; }
+
+            [Required]
+            [Display(Name = "Geboortedatum")]
+            [DataType(DataType.Date)]
+            public DateTime Geboortedatum { get; set; }
+
             [Required]
             [EmailAddress]
             public string Email { get; set; }
@@ -64,6 +75,8 @@ namespace HelloCore.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                Naam = user.Naam,
+                Geboortedatum = user.Geboortedatum,
                 Email = email,
                 PhoneNumber = phoneNumber
             };
@@ -85,6 +98,17 @@ namespace HelloCore.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
+            if (Input.Naam != user.Naam)
+            {
+                user.Naam = Input.Naam;
+            }
+
+            if (Input.Geboortedatum != user.Geboortedatum)
+            {
+                user.Geboortedatum = Input.Geboortedatum;
+            }
+
 
             var email = await _userManager.GetEmailAsync(user);
             if (Input.Email != email)
@@ -108,6 +132,7 @@ namespace HelloCore.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

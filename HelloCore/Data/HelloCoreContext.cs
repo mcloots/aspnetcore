@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HelloCore.Areas.Identity.Data;
 using HelloCore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HelloCore.Data
 {
-    public class HelloCoreContext : IdentityDbContext<IdentityUser>
+    public class HelloCoreContext : IdentityDbContext<CustomUser>
     {
         public HelloCoreContext (DbContextOptions<HelloCoreContext> options)
             : base(options)

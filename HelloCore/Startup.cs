@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using HelloCore.Areas.Identity.Data;
 using HelloCore.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,7 +40,7 @@ namespace HelloCore
             services.AddDbContext<HelloCoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("HelloCoreConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<CustomUser>()
                     .AddRoles<IdentityRole>()
                     .AddDefaultUI(Microsoft.AspNetCore.Identity.UI.UIFramework.Bootstrap4)
                     .AddEntityFrameworkStores<HelloCoreContext>();
@@ -80,7 +81,9 @@ namespace HelloCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HelloCoreContext context, IServiceProvider services)
+        public void Configure(IApplicationBuilder app, 
+            IHostingEnvironment env, 
+            IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
@@ -110,7 +113,7 @@ namespace HelloCore
 
         private async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
-            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            /*var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var Context = serviceProvider.GetRequiredService<HelloCoreContext>();
 
             IdentityResult roleResult;
@@ -136,7 +139,7 @@ namespace HelloCore
                         Context.SaveChanges();
                     }
                 }
-            }
+            }*/
         }
     }
 }
