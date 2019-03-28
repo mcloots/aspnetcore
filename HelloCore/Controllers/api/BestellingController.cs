@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HelloCore.Data;
 using HelloCore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,6 +27,13 @@ namespace HelloCore.Controllers.api
             return _context.Bestellingen.ToList();
         }
 
+        // GET: api/<controller>
+        [HttpGet("bestellingen")]
+        public IEnumerable<Bestelling> GetBestellingen()
+        {
+            return _context.Bestellingen.ToList();
+        }
+
         // GET api/<controller>/5
         [HttpGet("{id}")]
         public Bestelling Get(int id)
@@ -35,20 +43,55 @@ namespace HelloCore.Controllers.api
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]Bestelling value)
+        public ActionResult<Bestelling> PostBestelling([FromBody]Bestelling value)
         {
+            try
+            {
+                _context.Bestellingen.Add(value);
+                _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return CreatedAtAction(nameof(Get), new { id = value.BestellingID }, value);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Bestelling value)
+        public ActionResult PutBestelling(int id, [FromBody]Bestelling value)
         {
+            if (id != value.BestellingID)
+            {
+                return BadRequest();
+            }
+
+            var vOldBestelling = _context.Bestellingen.Find(id);
+
+            vOldBestelling.Artikel = value.Artikel;
+            vOldBestelling.KlantID = value.KlantID;
+            vOldBestelling.Prijs = value.Prijs;
+
+            _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult DeleteBestelling(int id)
         {
+            var vBestelling = _context.Bestellingen.Find(id);
+
+            if (vBestelling == null)
+            {
+                return NotFound();
+            }
+
+            _context.Bestellingen.Remove(vBestelling);
+            _context.SaveChanges();
+
+            return NoContent();
         }
     }
 }
