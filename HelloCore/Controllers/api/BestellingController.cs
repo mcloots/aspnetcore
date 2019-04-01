@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HelloCore.Data;
 using HelloCore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ namespace HelloCore.Controllers.api
         }
 
         // GET: api/<controller>
+        [Authorize]
         [HttpGet]
         public IEnumerable<Bestelling> Get()
         {
