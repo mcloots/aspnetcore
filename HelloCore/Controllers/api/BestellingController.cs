@@ -42,6 +42,18 @@ namespace HelloCore.Controllers.api
             return _context.Bestellingen.ToList();
         }
 
+        //GET: api/<controller>
+        [HttpGet("search")]
+        public IEnumerable<Bestelling> GetSearch()
+        {
+            //Queryable doesn't get executed until we access result (.ToList())
+            var vBestellingen = _uow.BestellingRepository.Search();
+            vBestellingen = vBestellingen.Where(b => b.Prijs >= 15);
+            vBestellingen = vBestellingen.Where(b => b.Artikel.Length > 2);
+
+            return vBestellingen.ToList();
+        }
+
         // GET api/<controller>/5
         [HttpGet("{id}")]
         public Bestelling Get(int id)

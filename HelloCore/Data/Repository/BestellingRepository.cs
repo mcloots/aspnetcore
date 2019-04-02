@@ -30,5 +30,10 @@ namespace HelloCore.Data.Repository
         {
             return _context.Bestellingen.ToList();
         }
+
+        public IQueryable<Bestelling> Search()
+        {
+            return _context.Bestellingen.AsQueryable();
+        }
     }
 }

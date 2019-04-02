@@ -11,5 +11,6 @@ namespace HelloCore.Data.Repository
         Bestelling Add(Bestelling bestelling);
         Bestelling Find(int bestellingID);
         IEnumerable<Bestelling> All();
+        IQueryable<Bestelling> Search();
     }
 }
