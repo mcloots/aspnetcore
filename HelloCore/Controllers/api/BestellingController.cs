@@ -26,6 +26,7 @@ namespace HelloCore.Controllers.api
         [HttpGet]
         public IEnumerable<Bestelling> Get()
         {
+            var claims = User.Claims;
             return _context.Bestellingen.ToList();
         }
 
