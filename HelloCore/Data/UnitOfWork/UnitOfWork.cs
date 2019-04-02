@@ -1,4 +1,5 @@
 ﻿using HelloCore.Data.Repository;
+using HelloCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,20 @@ namespace HelloCore.Data.UnitOfWork
                     this.iBestellingRepository = new BestellingRepository(_context);
                 }
                 return iBestellingRepository;
+            }
+        }
+
+        private GenericRepository<Bestelling> iBestellingGenericRepository;
+
+        public virtual GenericRepository<Bestelling> BestellingGenericRepository
+        {
+            get
+            {
+                if (this.iBestellingGenericRepository == null)
+                {
+                    this.iBestellingGenericRepository = new GenericRepository<Bestelling>(_context);
+                }
+                return iBestellingGenericRepository;
             }
         }
 

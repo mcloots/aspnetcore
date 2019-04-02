@@ -31,7 +31,8 @@ namespace HelloCore.Controllers.api
         {
             //var claims = User.Claims;
             //return _context.Bestellingen.ToList();
-            var vBestellingen = _uow.BestellingRepository.All();
+            //var vBestellingen = _uow.BestellingRepository.All();
+            var vBestellingen = _uow.BestellingGenericRepository.GetAll();
             return vBestellingen;
         }
 
@@ -47,7 +48,8 @@ namespace HelloCore.Controllers.api
         public IEnumerable<Bestelling> GetSearch()
         {
             //Queryable doesn't get executed until we access result (.ToList())
-            var vBestellingen = _uow.BestellingRepository.Search();
+            //var vBestellingen = _uow.BestellingRepository.Search();
+            var vBestellingen = _uow.BestellingGenericRepository.GetAll();
             vBestellingen = vBestellingen.Where(b => b.Prijs >= 15);
             vBestellingen = vBestellingen.Where(b => b.Artikel.Length > 2);
 
@@ -67,7 +69,7 @@ namespace HelloCore.Controllers.api
         {
             try
             {
-                _uow.BestellingRepository.Add(value);
+                _uow.BestellingGenericRepository.Create(value);
                 _uow.Save();
             }
             catch (Exception ex)
