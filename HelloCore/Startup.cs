@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HelloCore.Areas.Identity.Data;
 using HelloCore.Data;
+using HelloCore.Data.UnitOfWork;
 using HelloCore.Helpers;
 using HelloCore.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,7 +45,11 @@ namespace HelloCore
             });
 
             services.AddDbContext<HelloCoreContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("HelloCoreConnection")));
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("HelloCoreConnection"));
+            },
+                ServiceLifetime.Scoped
+                );
 
             services.AddDefaultIdentity<CustomUser>()
                     .AddRoles<IdentityRole>()
@@ -129,6 +134,7 @@ namespace HelloCore
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

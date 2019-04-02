@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HelloCore.Data;
+using HelloCore.Data.UnitOfWork;
 using HelloCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,19 +16,23 @@ namespace HelloCore.Controllers.api
     [Route("api/[controller]")]
     public class BestellingController : Controller
     {
+        private readonly IUnitOfWork _uow;
         private readonly HelloCoreContext _context;
-        public BestellingController(HelloCoreContext context)
+        public BestellingController(HelloCoreContext context, IUnitOfWork uow)
         {
             _context = context;
+            _uow = uow;
         }
 
         // GET: api/<controller>
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public IEnumerable<Bestelling> Get()
         {
-            var claims = User.Claims;
-            return _context.Bestellingen.ToList();
+            //var claims = User.Claims;
+            //return _context.Bestellingen.ToList();
+            var vBestellingen = _uow.BestellingRepository.All();
+            return vBestellingen;
         }
 
         // GET: api/<controller>
@@ -50,8 +55,8 @@ namespace HelloCore.Controllers.api
         {
             try
             {
-                _context.Bestellingen.Add(value);
-                _context.SaveChangesAsync();
+                _uow.BestellingRepository.Add(value);
+                _uow.Save();
             }
             catch (Exception ex)
             {
