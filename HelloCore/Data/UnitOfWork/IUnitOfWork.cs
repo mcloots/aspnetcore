@@ -9,9 +9,7 @@ namespace HelloCore.Data.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        BestellingRepository BestellingRepository { get; }
-
-        GenericRepository<Bestelling> BestellingGenericRepository { get; }
+        GenericRepository<Bestelling> BestellingRepository { get; }
         void Save();
     }
 }

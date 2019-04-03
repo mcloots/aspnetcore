@@ -15,32 +15,19 @@ namespace HelloCore.Data.UnitOfWork
         {
             _context = context;
         }
+      
 
-        private BestellingRepository iBestellingRepository;
+        private GenericRepository<Bestelling> iBestellingRepository;
 
-        public virtual BestellingRepository BestellingRepository
+        public GenericRepository<Bestelling> BestellingRepository
         {
             get
             {
                 if (this.iBestellingRepository == null)
                 {
-                    this.iBestellingRepository = new BestellingRepository(_context);
+                    this.iBestellingRepository = new GenericRepository<Bestelling>(_context);
                 }
                 return iBestellingRepository;
-            }
-        }
-
-        private GenericRepository<Bestelling> iBestellingGenericRepository;
-
-        public virtual GenericRepository<Bestelling> BestellingGenericRepository
-        {
-            get
-            {
-                if (this.iBestellingGenericRepository == null)
-                {
-                    this.iBestellingGenericRepository = new GenericRepository<Bestelling>(_context);
-                }
-                return iBestellingGenericRepository;
             }
         }
 

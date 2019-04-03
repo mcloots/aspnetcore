@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HelloCore.Data;
+using HelloCore.Data.Repository;
 using HelloCore.Data.UnitOfWork;
 using HelloCore.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -17,30 +18,27 @@ namespace HelloCore.Controllers.api
     public class BestellingController : Controller
     {
         private readonly IUnitOfWork _uow;
-        private readonly HelloCoreContext _context;
-        public BestellingController(HelloCoreContext context, IUnitOfWork uow)
+
+        public BestellingController(IUnitOfWork uow)
         {
-            _context = context;
             _uow = uow;
         }
 
         // GET: api/<controller>
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public IEnumerable<Bestelling> Get()
         {
-            //var claims = User.Claims;
-            //return _context.Bestellingen.ToList();
-            //var vBestellingen = _uow.BestellingRepository.All();
-            var vBestellingen = _uow.BestellingGenericRepository.GetAll();
+            var vBestellingen = _uow.BestellingRepository.GetAll();
             return vBestellingen;
         }
+
 
         // GET: api/<controller>
         [HttpGet("bestellingen")]
         public IEnumerable<Bestelling> GetBestellingen()
         {
-            return _context.Bestellingen.ToList();
+            return _uow.BestellingRepository.GetAll();
         }
 
         //GET: api/<controller>
@@ -48,8 +46,7 @@ namespace HelloCore.Controllers.api
         public IEnumerable<Bestelling> GetSearch()
         {
             //Queryable doesn't get executed until we access result (.ToList())
-            //var vBestellingen = _uow.BestellingRepository.Search();
-            var vBestellingen = _uow.BestellingGenericRepository.GetAll();
+            var vBestellingen = _uow.BestellingRepository.GetAll();
             vBestellingen = vBestellingen.Where(b => b.Prijs >= 15);
             vBestellingen = vBestellingen.Where(b => b.Artikel.Length > 2);
 
@@ -60,7 +57,7 @@ namespace HelloCore.Controllers.api
         [HttpGet("{id}")]
         public Bestelling Get(int id)
         {
-            return _context.Bestellingen.Find(id);
+            return _uow.BestellingRepository.GetById(id);
         }
 
         // POST api/<controller>
@@ -69,7 +66,7 @@ namespace HelloCore.Controllers.api
         {
             try
             {
-                _uow.BestellingGenericRepository.Create(value);
+                _uow.BestellingRepository.Create(value);
                 _uow.Save();
             }
             catch (Exception ex)
@@ -88,13 +85,14 @@ namespace HelloCore.Controllers.api
                 return BadRequest();
             }
 
-            var vOldBestelling = _context.Bestellingen.Find(id);
+            var vOldBestelling = _uow.BestellingRepository.GetById(id);
 
             vOldBestelling.Artikel = value.Artikel;
             vOldBestelling.KlantID = value.KlantID;
             vOldBestelling.Prijs = value.Prijs;
 
-            _context.SaveChangesAsync();
+            _uow.BestellingRepository.Update(id, vOldBestelling);
+            _uow.Save();
 
             return NoContent();
         }
@@ -103,15 +101,15 @@ namespace HelloCore.Controllers.api
         [HttpDelete("{id}")]
         public ActionResult DeleteBestelling(int id)
         {
-            var vBestelling = _context.Bestellingen.Find(id);
+            var vBestelling = _uow.BestellingRepository.GetById(id);
 
             if (vBestelling == null)
             {
                 return NotFound();
             }
 
-            _context.Bestellingen.Remove(vBestelling);
-            _context.SaveChanges();
+            _uow.BestellingRepository.Delete(id);
+            _uow.Save();
 
             return NoContent();
         }
